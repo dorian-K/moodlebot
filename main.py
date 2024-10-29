@@ -32,12 +32,12 @@ options.add_argument('--disable-dev-shm-usage')
 # options.add_argument('--headless')
 
 load_dotenv()
-username = os.getenv("SSO_USERNAME")
-password = os.getenv("SSO_PASSWORD")
-mfa_name = os.getenv("SSO_TAN_NAME")
-mfa_secret = os.getenv("SSO_TAN_SECRET")
-discord_webhook = os.getenv("DISCORD_WEBHOOK_URL")
-discord_user_id = os.getenv("DISCORD_USER_ID")
+username = os.getenv("SSO_USERNAME") # username for rwth sso
+password = os.getenv("SSO_PASSWORD") # password
+mfa_name = os.getenv("SSO_TAN_NAME") # tan name, example: TOTP61....
+mfa_secret = os.getenv("SSO_TAN_SECRET") # The secret you get for the mfa tan
+discord_webhook = os.getenv("DISCORD_WEBHOOK_URL") # discord webhook for notification
+discord_user_id = os.getenv("DISCORD_USER_ID") # the user that should be pinged
 
 assert username, "SSO_USERNAME not set in .env"
 assert password, "SSO_PASSWORD not set in .env"
@@ -126,7 +126,7 @@ except:
 
 if len(data_elements) is not prev_elems:
     print(data_elements)
-    message = f"<@{discord_user_id}> New quiz available on moodle! Check it out at: " + page_url + "!"
+    message = f"<@{discord_user_id}> New quiz available on moodle! Check it out at: " + page_url
     # try sending discord webhook for 3 trys
     for i in range(3):
         try:
