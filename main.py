@@ -17,6 +17,7 @@ mfa_name = os.getenv("SSO_TAN_NAME") # tan name, example: TOTP61....
 mfa_secret = os.getenv("SSO_TAN_SECRET") # The secret you get for the mfa tan
 discord_webhook = os.getenv("DISCORD_WEBHOOK_URL") # discord webhook for notification
 discord_user_id = os.getenv("DISCORD_USER_ID") # the user that should be pinged
+page_url = os.getenv("MOODLE_PAGE_URL") # the moodle page url
 
 assert username, "SSO_USERNAME not set in .env"
 assert password, "SSO_PASSWORD not set in .env"
@@ -170,10 +171,10 @@ def make_driver(headless=False):
     return webdriver.Chrome(options=options)
 
 def main(headless=False):
+    global page_url
     lock()
 
     driver = make_driver(headless=headless)
-    page_url = "https://moodle.rwth-aachen.de/course/view.php?id=43600"
     try:
         perform_login(driver, username, password, mfa_name)
         take_actions(driver, page_url)
