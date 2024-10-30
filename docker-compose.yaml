@@ -1,0 +1,8 @@
+
+services:
+  cron_service:
+    build: .
+    container_name: cron_container
+    restart: always
+    environment:
+      - TZ=Europe/Berlin
