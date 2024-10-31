@@ -3,6 +3,21 @@ services:
   cron_service:
     build: .
     container_name: cron_container
-    restart: always
+    restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
+      - DATA_DIR=/tmp/selenium_profile
+      - REMOTE_DRIVER=http://selenium:4444/wd/hub
+    volumes:
+      - ./prev_elems.data:/tmp/prev_elems.data
+    depends_on:
+      - selenium
+  selenium:
+    image: selenium/standalone-chromium
+    container_name: selenium_container
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+    shm_size: 2g
+    volumes:
+      - ./selenium_profile:/tmp/selenium_profile:rw

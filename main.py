@@ -104,6 +104,18 @@ def perform_login(driver: webdriver.Chrome, username, password, mfa_name):
 
     WebDriverWait(driver, 10).until(EC.url_contains("moodle.rwth-aachen.de"))
     print("Successfully logged in!")
+
+def send_webhook(message):
+    # try sending discord webhook for 3 trys
+    for _ in range(3):
+        try:
+            import requests
+            requests.post(discord_webhook, json={"content": message})
+            return True
+        except:
+            import time
+            time.sleep(3) # Wait 3 seconds
+    return False
     
 def take_actions(driver, page_url):
     driver.get(page_url)
@@ -122,17 +134,9 @@ def take_actions(driver, page_url):
     if len(data_elements) is not prev_elems:
         print("Sending discord notification for", data_elements)
         message = f"<@{discord_user_id}> New quiz available on moodle ({len(data_elements)} != {prev_elems})! Check it out at: " + page_url
-        # try sending discord webhook for 3 trys
-        for _ in range(3):
-            try:
-                import requests
-                requests.post(discord_webhook, json={"content": message})
-                break
-            except:
-                pass
-        
-        with open("prev_elems.data", "w") as f:
-            f.write(str(len(data_elements)))
+        if send_webhook(message):
+            with open("prev_elems.data", "w") as f:
+                f.write(str(len(data_elements)))
     else:
         print("No new quiz available")
 
@@ -159,22 +163,30 @@ def lock():
         os.remove("lock")
     atexit.register(remove_lock)
 
-def make_driver(headless=False):
+def make_driver(headless=False, remote_driver=None):
     options = webdriver.ChromeOptions()
     profile_path = "./selenium_profile"  # Path to save the profile data
+    if os.getenv("DATA_DIR"):
+        profile_path = os.getenv("DATA_DIR")
     options.add_argument(f"--user-data-dir={profile_path}")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     if headless:
         options.add_argument('--headless')
+    
 
+    if remote_driver:
+        return webdriver.Remote(remote_driver, options=options)
+    
     return webdriver.Chrome(options=options)
 
-def main(headless=False):
+def main(headless=False, remote_driver=None):
     global page_url
     lock()
-
-    driver = make_driver(headless=headless)
+    if not remote_driver and os.getenv("REMOTE_DRIVER"):
+        remote_driver = os.getenv("REMOTE_DRIVER")
+        print("Using remote driver: ", remote_driver)
+    driver = make_driver(headless=headless, remote_driver=remote_driver)
     try:
         perform_login(driver, username, password, mfa_name)
         take_actions(driver, page_url)
@@ -186,6 +198,18 @@ def main(headless=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Moodle Bot")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode")
+    parser.add_argument("--remote-driver", default=None, help="Remote driver url")
+    parser.add_argument("--test-webhook", action="store_true", help="Test the discord webhook")
+    parser.add_argument("--cwd", default=None, help="Change working directory")
     args = parser.parse_args()
-    main(args.headless)
+    if args.test_webhook:
+        if send_webhook("Test message"):
+            print("Webhook test successful!")
+        else:
+            print("Webhook test failed!")
+        import sys
+        sys.exit(0)
+    if args.cwd:
+        os.chdir(args.cwd)
+    main(args.headless, args.remote_driver)
 
