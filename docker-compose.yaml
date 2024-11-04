@@ -16,8 +16,6 @@ services:
     image: selenium/standalone-chromium
     container_name: selenium_container
     restart: unless-stopped
-    ports:
-      - "4444:4444"
     shm_size: 2g
     volumes:
       - ./selenium_profile:/tmp/selenium_profile:rw

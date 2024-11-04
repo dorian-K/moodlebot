@@ -1,8 +1,8 @@
 # Monday 8:30 - 10:00
-* 8-9 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp
-0-30 10 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp
+* 8-9 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
+0-30 10 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
 
 # Tuesday 8:30 - 10:00
-* 8-9 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp
-0-30 10 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp
+* 8-9 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
+0-30 10 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
 
