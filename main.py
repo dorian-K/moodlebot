@@ -42,7 +42,7 @@ def moodle_is_logged_in(driver: webdriver.Chrome):
     try:
         logged_in_cond = EC.presence_of_element_located((By.CLASS_NAME, "userinitials"))
         logged_out_cond = EC.presence_of_element_located((By.XPATH, '//*[@id="region-main"]/div/div[3]/div[2]/div/div[1]/a'))
-        WebDriverWait(driver, 5).until(EC.any_of(logged_in_cond, logged_out_cond))
+        WebDriverWait(driver, 10).until(EC.any_of(logged_in_cond, logged_out_cond))
 
         try:
             if logged_in_cond(driver):
@@ -140,14 +140,16 @@ def take_actions(driver, page_url):
     else:
         print("No new quiz available")
 
-def teardown(driver):
+def teardown(driver, success=True):
     # by default cookies expire after the session closes, so we update the expiry to 3 days
-    for cookie in driver.get_cookies():
-        if "expiry" not in cookie and cookie['domain'].endswith("moodle.rwth-aachen.de"):
-            cookie['expiry'] = 60 * 60 * 24 * 3 + int(time.time())
-            driver.add_cookie(cookie)
-            print("Updated expiry of cookie: ", cookie["name"])
-
+    if success:
+        for cookie in driver.get_cookies():
+            if "expiry" not in cookie and cookie['domain'].endswith("moodle.rwth-aachen.de"):
+                cookie['expiry'] = 60 * 60 * 24 * 3 + int(time.time())
+                driver.add_cookie(cookie)
+                print("Updated expiry of cookie: ", cookie["name"])
+    else:
+        driver.delete_all_cookies()
     # Close the driver after the process
     driver.quit()
 
@@ -187,13 +189,15 @@ def main(headless=False, remote_driver=None):
         remote_driver = os.getenv("REMOTE_DRIVER")
         print("Using remote driver: ", remote_driver)
     driver = make_driver(headless=headless, remote_driver=remote_driver)
+    success = False
     try:
         perform_login(driver, username, password, mfa_name)
         take_actions(driver, page_url)
+        success = True
     except Exception as e:
         print("An error occurred: ", e)
     finally:
-        teardown(driver)
+        teardown(driver, success=success)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Moodle Bot")

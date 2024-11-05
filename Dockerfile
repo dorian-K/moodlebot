@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 
-RUN apt-get update && apt-get install -y cron tzdata
+RUN apt-get update && apt-get install -y cron tzdata nano
 
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
