@@ -7,7 +7,6 @@ services:
     environment:
       - TZ=Europe/Berlin
       - DATA_DIR=/tmp/selenium_profile
-      - REMOTE_DRIVER=http://selenium:4444/wd/hub
     volumes:
       - ./prev_elems.data:/tmp/prev_elems.data:rw
     depends_on:

@@ -1,8 +1,8 @@
 # Monday 8:30 - 10:00
-* 8-9 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
-0-30 10 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
+* 8-9 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp --remote-driver "http://selenium:4444/wd/hub" >> /var/log/moodlebot 2>&1
+0-30 10 * * 1 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp --remote-driver "http://selenium:4444/wd/hub" >> /var/log/moodlebot 2>&1
 
 # Tuesday 8:30 - 10:00
-* 8-9 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
-0-30 10 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp >> /var/log/moodlebot
+* 8-9 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp --remote-driver "http://selenium:4444/wd/hub" >> /var/log/moodlebot 2>&1
+0-30 10 * * 2 /usr/local/bin/python /usr/local/bin/script.py --headless --cwd /tmp --remote-driver "http://selenium:4444/wd/hub" >> /var/log/moodlebot 2>&1
 
