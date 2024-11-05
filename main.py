@@ -166,9 +166,10 @@ def lock():
         os.remove("lock")
     atexit.register(remove_lock)
 
-def make_driver(headless=False, remote_driver=None):
+def make_driver(headless=False, remote_driver=None, profile_path=None):
     options = webdriver.ChromeOptions()
-    profile_path = "./selenium_profile"  # Path to save the profile data
+    if profile_path is None:
+        profile_path = "./selenium_profile"  # Path to save the profile data
     if os.getenv("DATA_DIR"):
         profile_path = os.getenv("DATA_DIR")
     options.add_argument(f"--user-data-dir={profile_path}")
@@ -183,13 +184,13 @@ def make_driver(headless=False, remote_driver=None):
     
     return webdriver.Chrome(options=options)
 
-def main(headless=False, remote_driver=None):
+def main(headless=False, remote_driver=None, profile_path=None):
     global page_url
     lock()
     if not remote_driver and os.getenv("REMOTE_DRIVER"):
         remote_driver = os.getenv("REMOTE_DRIVER")
         print("Using remote driver: ", remote_driver)
-    driver = make_driver(headless=headless, remote_driver=remote_driver)
+    driver = make_driver(headless=headless, remote_driver=remote_driver, profile_path=profile_path)
     success = False
     try:
         perform_login(driver, username, password, mfa_name)
@@ -204,6 +205,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Moodle Bot")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode")
     parser.add_argument("--remote-driver", default=None, help="Remote driver url")
+    parser.add_argument("--profile-path", default=None, help="Profile path for selenium")
     parser.add_argument("--test-webhook", action="store_true", help="Test the discord webhook")
     parser.add_argument("--cwd", default=None, help="Change working directory")
     args = parser.parse_args()
@@ -216,5 +218,5 @@ if __name__ == "__main__":
         sys.exit(0)
     if args.cwd:
         os.chdir(args.cwd)
-    main(args.headless, args.remote_driver)
+    main(args.headless, args.remote_driver, args.profile_path)
 

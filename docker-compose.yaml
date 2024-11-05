@@ -6,7 +6,6 @@ services:
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
-      - DATA_DIR=/tmp/selenium_profile
     volumes:
       - ./prev_elems.data:/tmp/prev_elems.data:rw
     depends_on:
