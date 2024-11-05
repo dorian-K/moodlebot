@@ -41,7 +41,8 @@ def click(driver, element, expected_text=None):
 def moodle_is_logged_in(driver: webdriver.Chrome):
     try:
         logged_in_cond = EC.presence_of_element_located((By.CLASS_NAME, "userinitials"))
-        logged_out_cond = EC.presence_of_element_located((By.XPATH, '//*[@id="region-main"]/div/div[3]/div[2]/div/div[1]/a'))
+        # //*[@id="region-main"]/div/div[2]/div[2]/div/div[1]/a
+        logged_out_cond = EC.presence_of_element_located((By.LINK_TEXT, 'Login via RWTH Single Sign-on'))
         WebDriverWait(driver, 10).until(EC.any_of(logged_in_cond, logged_out_cond))
 
         try:
@@ -72,9 +73,9 @@ def perform_login(driver: webdriver.Chrome, username, password, mfa_name):
     
     # click(driver, driver.find_element(By.XPATH, '//*[@id="usernavigation"]/div[3]/div/span/a'), ["Login", "Log in"])
    
-    login_btn_xpath = '//*[@id="region-main"]/div/div[3]/div[2]/div/div[1]/a'
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, login_btn_xpath)))
-    click(driver, driver.find_element(By.XPATH, login_btn_xpath), "Login via RWTH Single Sign-on")
+    
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Login via RWTH Single Sign-on")))
+    click(driver, driver.find_element(By.LINK_TEXT, "Login via RWTH Single Sign-on"), "Login via RWTH Single Sign-on")
     print("Clicked 'Login via RWTH Single Sign-on'")
     WebDriverWait(driver, 10).until(EC.url_contains("sso.rwth-aachen.de"))
 
